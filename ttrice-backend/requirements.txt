@@ -1,0 +1,10 @@
+fastapi
+httptools
+pip-chill
+python-dotenv
+pyyaml
+sqlmodel
+uvicorn
+uvloop
+watchfiles
+websockets
