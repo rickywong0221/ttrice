@@ -4,7 +4,7 @@
 
 Goal: Rewrite the data models of thisthisrice using SQLModel and store the data on sqlite
 """
-# 匯入模組
+
 import re
 from typing import Annotated, List, Optional, Dict
 from annotated_types import Interval
@@ -12,6 +12,7 @@ from sqlmodel import Field, Session, SQLModel, create_engine, select
 from pathlib import Path
 from fastapi import FastAPI, HTTPException, Depends
 from models import Dish, Ricebox
+from fastapi.middleware.cors import CORSMiddleware
 
 
 # 定義環境及"constant"
@@ -52,6 +53,14 @@ def get_session():
 
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow requests from all origins
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/")

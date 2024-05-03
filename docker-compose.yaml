@@ -1,0 +1,21 @@
+version: "3.8"
+services:
+  backend:
+    build: ./ttrice-backend
+    ports:
+      - "8000:8000"
+    networks:
+      - ttnet
+  frontend:
+    build: ./ttrice-frontend
+    ports:
+      - "8501:8501"
+    networks:
+      - ttnet
+    depends_on:
+      - backend
+    stdin_open: true
+    tty: true
+networks:
+  ttnet:
+

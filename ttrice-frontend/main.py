@@ -3,7 +3,7 @@ import requests
 import pandas as pd
 from typing import List
 
-API_URL = 'http://127.0.0.1:8000/'
+API_URL = 'http://backend-service:8000/'
 
 
 def greetings() -> None:
