@@ -8,20 +8,29 @@ Goal: Rewrite the data models of thisthisrice using SQLModel and store the data 
 import re
 from typing import Annotated, List, Optional, Dict
 from annotated_types import Interval
-from sqlmodel import Field, Session, SQLModel, create_engine, select
+from sqlmodel import Field, Session, SQLModel, select, create_engine
 from pathlib import Path
 from fastapi import FastAPI, HTTPException, Depends
 from models import Dish, Ricebox
 from fastapi.middleware.cors import CORSMiddleware
+# from sqlalchemy import create_engine
+import psycopg2
 
 
-# 定義環境及"constant"
+host = 'postgres'
+port = 5432
+database = 'ttrice'
+user = 'user'
+password = 'password'
+
 CSV_FILE = 'thisthisrice.csv'
 DB_PATH = 'rice.db'
-SQLDB_PATH = 'sqlite:///' + DB_PATH
+# SQLDB_PATH = 'sqlite:///' + DB_PATH
+SQLDB_PATH = f"postgresql://{user}:{password}@{host}:{port}/{database}"
 
+# Create the SQLAlchemy engine
+engine = create_engine(SQLDB_PATH)
 
-# Importing data
 if Path(DB_PATH).exists():
     engine = create_engine(SQLDB_PATH)
     print("DB已建立，跳過CSV")
@@ -29,17 +38,17 @@ else:
     engine = create_engine(SQLDB_PATH)
     with open(CSV_FILE, 'r', encoding='utf-8') as file_descriptor:
         csv_content: list[str] = file_descriptor.readlines()
-    # 移除最後一行
+
     csv_content.pop()
     pattern = re.compile(r"[0-9\. \n\*]+")
     fields_list: list[str] = []
     for line in csv_content:
         fields_list.append(line.split(","))
-    # 問題1：*在這裡的用處；zip的功能
+
     dish_by_wday = list(zip(*fields_list))
 
-    # 把Dish儲存到SQLite
-    SQLModel.metadata.create_all(engine)
+
+    SQLModel.metadata.create_all(engine)   
     with Session(engine) as session:
         for i in range(len(dish_by_wday)):
             for x in dish_by_wday[i]:
